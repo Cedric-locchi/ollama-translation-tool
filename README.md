@@ -1,0 +1,1 @@
+[![Node.js CI](https://github.com/Cedric-locchi/ollama-translation-tool/actions/workflows/github-workflow.yml/badge.svg)](https://github.com/Cedric-locchi/ollama-translation-tool/actions/workflows/github-workflow.yml)
