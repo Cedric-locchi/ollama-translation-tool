@@ -1,0 +1,16 @@
+{
+    "app": {
+        "title": "Test Application",
+        "subtitle": "A test app for translation"
+    },
+    "navigation": {
+        "home": "Home",
+        "about": "About",
+        "contact": "Contact"
+    },
+    "messages": {
+        "welcome": "Welcome to our app!",
+        "success": "Operation completed successfully",
+        "error": "An error occurred"
+    }
+}

@@ -1,0 +1,63 @@
+{
+    "name": "@cedric/translation-tools",
+    "version": "1.0.0",
+    "description": "Outils Node.js pour la traduction de fichiers d'application avec Ollama",
+    "main": "dist/cli.js",
+    "bin": {
+        "translate-tool": "dist/cli.js",
+        "ttool": "dist/cli.js"
+    },
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "build:cli": "vite build --config vite.cli.config.ts",
+        "dev": "tsx watch src/index.ts",
+        "start": "node dist/cli.js",
+        "clean": "rm -rf dist",
+        "type-check": "tsc --noEmit",
+        "lint": "eslint src --ext .ts",
+        "lint:fix": "eslint src --ext .ts --fix",
+        "format": "prettier --write src/**/*.ts",
+        "translate": "tsx src/cli.ts",
+        "test": "vitest",
+        "test:watch": "vitest --watch",
+        "install:cli": "./install.sh"
+    },
+    "keywords": [
+        "translation",
+        "i18n",
+        "ollama",
+        "typescript",
+        "cli",
+        "automation"
+    ],
+    "author": "Cedric",
+    "license": "MIT",
+    "dependencies": {
+        "@drizzle-team/brocli": "^0.11.0",
+        "chalk": "^5.3.0",
+        "dotenv": "^16.4.5",
+        "glob": "^10.4.2",
+        "ollama": "^0.5.8",
+        "ora": "^8.0.1",
+        "yaml": "^2.4.5"
+    },
+    "devDependencies": {
+        "@types/node": "^20.14.9",
+        "@typescript-eslint/eslint-plugin": "^7.14.1",
+        "@typescript-eslint/parser": "^7.14.1",
+        "@vitest/coverage-v8": "^1.6.0",
+        "eslint": "^8.57.0",
+        "prettier": "^3.3.2",
+        "tsx": "^4.16.0",
+        "typescript": "^5.5.2",
+        "vite": "^4.5.3",
+        "vite-plugin-node": "^3.1.0",
+        "vitest": "^1.6.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "packageManager": "pnpm@9.4.0"
+}

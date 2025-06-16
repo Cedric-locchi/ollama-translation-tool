@@ -1,0 +1,9 @@
+app:
+    title: 'Test YAML App'
+    subtitle: 'YAML test file'
+navigation:
+    home: 'Home'
+    about: 'About'
+messages:
+    welcome: 'Welcome!'
+    goodbye: 'Goodbye!'
