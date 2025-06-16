@@ -304,5 +304,4 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 ## Related Projects
 
 - [Ollama](https://ollama.ai/) - Local LLM runtime
-- [i18next](https://www.i18next.com/) - Internationalization framework
 - [Brocli](https://github.com/drizzle-team/brocli) - CLI framework from drizzle-team

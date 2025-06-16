@@ -6,8 +6,7 @@ export interface TranslationConfig {
     maxConcurrentRequests: number;
     timeout: number;
     translationsDir: string;
-    outputDir: string;
-    outputFileName: string;
+    fileName: string | undefined;
 }
 
 export interface TranslationRequest {

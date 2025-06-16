@@ -138,14 +138,15 @@ export class FileProcessor {
     }
 
     private async saveTranslations(fileTranslations: FileTranslation[], targetLangs: string[]): Promise<void> {
-        await fs.mkdir(config.outputDir, { recursive: true });
-
         for (const fileTranslation of fileTranslations) {
             const fileName = path.basename(fileTranslation.filePath, path.extname(fileTranslation.filePath));
             const ext = path.extname(fileTranslation.filePath);
 
             for (const lang of targetLangs) {
-                const outputPath = path.join(config.outputDir, config.outputFileName);
+                await fs.mkdir(path.join(lang), { recursive: true });
+
+                const outputFileName = config.fileName !== undefined ? config.fileName : `${lang}.${ext}`;
+                const outputPath = path.join(lang, outputFileName);
 
                 let content: string;
                 if (ext === '.json') {

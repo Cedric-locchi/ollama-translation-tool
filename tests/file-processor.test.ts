@@ -433,7 +433,7 @@ app:
 
             await (fileProcessor as any).saveTranslations(fileTranslations, ['fr', 'es']);
 
-            expect(mockFs.mkdir).toHaveBeenCalledWith(config.outputDir, { recursive: true });
+            expect(mockFs.mkdir).toHaveBeenCalledWith('es', { recursive: true });
             expect(mockFs.writeFile).toHaveBeenCalledTimes(2);
 
             // Check JSON formatting
