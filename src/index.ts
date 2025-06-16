@@ -3,12 +3,7 @@ export { FileProcessor } from './file-processor.js';
 export { config, validateConfig } from './config.js';
 export * from './types.js';
 
-// Exported utility functions
-export async function quickTranslate(
-    text: string,
-    sourceLang: string,
-    targetLang: string
-): Promise<string> {
+export async function quickTranslate(text: string, sourceLang: string, targetLang: string): Promise<string> {
     const { OllamaTranslator } = await import('./translator.js');
     const translator = new OllamaTranslator();
     const result = await translator.translate({

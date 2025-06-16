@@ -36,7 +36,6 @@ export class FileProcessor {
             translatedKeys += keyCount * targetLangs.length;
         }
 
-        // Save translated files
         await this.saveTranslations(fileTranslations, targetLangs);
 
         return {
@@ -79,20 +78,14 @@ export class FileProcessor {
         }
     }
 
-    private async translateObject(
-        obj: Record<string, any>,
-        targetLang: string
-    ): Promise<Record<string, any>> {
+    private async translateObject(obj: Record<string, any>, targetLang: string): Promise<Record<string, any>> {
         const result: Record<string, any> = {};
         const requests: { key: string; request: TranslationRequest }[] = [];
 
-        // Collect all strings to translate
         this.collectTranslationRequests(obj, '', requests, targetLang);
 
-        // Batch translation
         const responses = await this.translator.translateBatch(requests.map(item => item.request));
 
-        // Reconstruct object with translations
         for (let i = 0; i < requests.length; i++) {
             const request = requests[i];
             const response = responses[i];
@@ -104,12 +97,7 @@ export class FileProcessor {
         return result;
     }
 
-    private collectTranslationRequests(
-        obj: any,
-        prefix: string,
-        requests: { key: string; request: TranslationRequest }[],
-        targetLang: string
-    ): void {
+    private collectTranslationRequests(obj: any, prefix: string, requests: { key: string; request: TranslationRequest }[], targetLang: string): void {
         for (const [key, value] of Object.entries(obj)) {
             const fullKey = prefix ? `${prefix}.${key}` : key;
 
@@ -126,7 +114,6 @@ export class FileProcessor {
             } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                 this.collectTranslationRequests(value, fullKey, requests, targetLang);
             }
-            // Arrays and other types are ignored for now
         }
     }
 
@@ -150,17 +137,11 @@ export class FileProcessor {
         }
     }
 
-    private async saveTranslations(
-        fileTranslations: FileTranslation[],
-        targetLangs: string[]
-    ): Promise<void> {
+    private async saveTranslations(fileTranslations: FileTranslation[], targetLangs: string[]): Promise<void> {
         await fs.mkdir(config.outputDir, { recursive: true });
 
         for (const fileTranslation of fileTranslations) {
-            const fileName = path.basename(
-                fileTranslation.filePath,
-                path.extname(fileTranslation.filePath)
-            );
+            const fileName = path.basename(fileTranslation.filePath, path.extname(fileTranslation.filePath));
             const ext = path.extname(fileTranslation.filePath);
 
             for (const lang of targetLangs) {

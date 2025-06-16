@@ -6,23 +6,13 @@ import { validateConfig, config } from './config.js';
 import { FileProcessor } from './file-processor.js';
 import { OllamaTranslator } from './translator.js';
 
-// Translate command
 const translateCommand = command({
     name: 'translate',
     desc: 'Traduit des fichiers de traduction avec Ollama',
     options: {
-        pattern: string('pattern')
-            .alias('p')
-            .required()
-            .desc('Pattern des fichiers à traduire (ex: "./translations/*.json")'),
-        file: string('file')
-            .alias('f')
-            .desc('Nom du fichier de sortie')
-            .default(config.outputFileName),
-        langs: string('langs')
-            .alias('l')
-            .desc('Langues cibles séparées par des virgules')
-            .default(config.targetLangs.join(',')),
+        pattern: string('pattern').alias('p').required().desc('Pattern des fichiers à traduire (ex: "./translations/*.json")'),
+        file: string('file').alias('f').desc('Nom du fichier de sortie').default(config.outputFileName),
+        langs: string('langs').alias('l').desc('Langues cibles séparées par des virgules').default(config.targetLangs.join(',')),
         source: string('source').alias('s').desc('Langue source').default(config.sourceLang),
         output: string('output').alias('o').desc('Répertoire de sortie').default(config.outputDir),
     },
@@ -30,37 +20,28 @@ const translateCommand = command({
         const spinner = ora('Initialisation...').start();
 
         try {
-            // Configuration validation
             validateConfig();
 
-            // Update config with command options
             config.outputDir = options.output;
             config.outputFileName = options.file;
 
-            // Display current configuration
             console.log(chalk.cyan('\n🔧 Configuration actuelle:'));
             console.log(`   Répertoire de sortie: ${config.outputDir}`);
             console.log(`   Fichier de sortie: ${config.outputFileName}`);
 
-            // Ollama connection check
             spinner.text = 'Vérification de la connexion Ollama...';
             const translator = new OllamaTranslator();
             const isAvailable = await translator.isAvailable();
 
             if (!isAvailable) {
-                spinner.fail(
-                    chalk.red("Ollama n'est pas disponible ou le modèle n'est pas installé")
-                );
+                spinner.fail(chalk.red("Ollama n'est pas disponible ou le modèle n'est pas installé"));
                 console.log(chalk.yellow(`Modèle requis: ${config.model}`));
-                console.log(
-                    chalk.yellow('Vérifiez que Ollama est démarré et que le modèle est téléchargé.')
-                );
+                console.log(chalk.yellow('Vérifiez que Ollama est démarré et que le modèle est téléchargé.'));
                 process.exit(1);
             }
 
             spinner.succeed(chalk.green('Connexion Ollama OK'));
 
-            // File processing
             const targetLangs = options.langs.split(',').map(lang => lang.trim());
             const processor = new FileProcessor();
 
@@ -69,7 +50,6 @@ const translateCommand = command({
 
             spinner.succeed(chalk.green('Traduction terminée !'));
 
-            // Statistics display
             console.log(chalk.cyan('\n📊 Statistiques:'));
             console.log(`   Fichiers traités: ${stats.totalFiles}`);
             console.log(`   Clés traduites: ${stats.totalKeys}`);
@@ -84,7 +64,6 @@ const translateCommand = command({
     },
 });
 
-// Check command
 const checkCommand = command({
     name: 'check',
     desc: 'Vérifie la configuration et la connexion Ollama',
@@ -104,9 +83,7 @@ const checkCommand = command({
                 spinner.succeed(chalk.green(`Ollama connecté avec le modèle ${config.model}`));
             } else {
                 spinner.fail(chalk.red('Impossible de se connecter à Ollama'));
-                console.log(
-                    chalk.yellow('Vérifiez que Ollama est démarré et que le modèle est téléchargé.')
-                );
+                console.log(chalk.yellow('Vérifiez que Ollama est démarré et que le modèle est téléchargé.'));
             }
 
             console.log(chalk.cyan('\n🔧 Configuration actuelle:'));
@@ -123,7 +100,6 @@ const checkCommand = command({
     },
 });
 
-// Test command
 const testCommand = command({
     name: 'test',
     desc: "Test rapide de traduction d'un texte",
@@ -166,13 +142,11 @@ const testCommand = command({
     },
 });
 
-// Error handling
 process.on('unhandledRejection', reason => {
     console.error(chalk.red('Erreur non gérée:'), reason);
     process.exit(1);
 });
 
-// Run CLI
 run([translateCommand, checkCommand, testCommand], {
     name: 'translation-tools',
     description: 'Outils de traduction automatisée avec Ollama',

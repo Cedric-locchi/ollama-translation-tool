@@ -28,7 +28,7 @@ export class OllamaTranslator {
                 prompt,
                 stream: false,
                 options: {
-                    temperature: 0.1, // Low temperature for more deterministic translations
+                    temperature: 0.1,
                     top_p: 0.9,
                 },
             });
@@ -42,16 +42,13 @@ export class OllamaTranslator {
                 model: config.model,
             };
         } catch (error) {
-            throw new Error(
-                `Erreur de traduction: ${error instanceof Error ? error.message : 'Erreur inconnue'}`
-            );
+            throw new Error(`Erreur de traduction: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
         }
     }
 
     private buildTranslationPrompt(request: TranslationRequest): string {
         const context = request.context ? `\n\nContexte: ${request.context}` : '';
 
-        // Mapping des codes de langue vers des noms complets
         const languageNames: Record<string, string> = {
             fr: 'français',
             en: 'anglais',
@@ -80,11 +77,10 @@ Traduction en ${targetLangName}:`;
     }
 
     private extractTranslation(response: string): string {
-        // Clean response by removing unwanted prefixes/suffixes
         const cleaned = response
             .trim()
             .replace(/^(Traduction|Translation):\s*/i, '')
-            .replace(/^["']|["']$/g, '') // Remove quotes from beginning/end
+            .replace(/^["']|["']$/g, '')
             .trim();
 
         return cleaned || response.trim();
@@ -103,7 +99,6 @@ Traduction en ${targetLangName}:`;
                     results.push(result.value);
                 } else {
                     console.error('Erreur de traduction:', result.reason);
-                    // Add default translation in case of error
                     results.push({
                         translatedText: '',
                         sourceLang: '',
