@@ -11,8 +11,7 @@ export const config: TranslationConfig = {
     maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || '3'),
     timeout: parseInt(process.env.TRANSLATION_TIMEOUT || '30000'),
     translationsDir: process.env.TRANSLATIONS_DIR || './translations',
-    outputDir: process.env.OUTPUT_DIR || './output',
-    outputFileName: process.env.OUTPUT_FILE_NAME || 'translations',
+    fileName: process.env.FILE_NAME || undefined,
 };
 
 export function validateConfig(): void {

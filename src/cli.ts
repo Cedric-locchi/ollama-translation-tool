@@ -11,10 +11,9 @@ const translateCommand = command({
     desc: 'Traduit des fichiers de traduction avec Ollama',
     options: {
         pattern: string('pattern').alias('p').required().desc('Pattern des fichiers à traduire (ex: "./translations/*.json")'),
-        file: string('file').alias('f').desc('Nom du fichier de sortie').default(config.outputFileName),
         langs: string('langs').alias('l').desc('Langues cibles séparées par des virgules').default(config.targetLangs.join(',')),
         source: string('source').alias('s').desc('Langue source').default(config.sourceLang),
-        output: string('output').alias('o').desc('Répertoire de sortie').default(config.outputDir),
+        file: string('file').alias('f').desc('Nom du fichier de sortie'),
     },
     handler: async options => {
         const spinner = ora('Initialisation...').start();
@@ -22,12 +21,7 @@ const translateCommand = command({
         try {
             validateConfig();
 
-            config.outputDir = options.output;
-            config.outputFileName = options.file;
-
-            console.log(chalk.cyan('\n🔧 Configuration actuelle:'));
-            console.log(`   Répertoire de sortie: ${config.outputDir}`);
-            console.log(`   Fichier de sortie: ${config.outputFileName}`);
+            config.fileName = options.file;
 
             spinner.text = 'Vérification de la connexion Ollama...';
             const translator = new OllamaTranslator();
@@ -55,7 +49,6 @@ const translateCommand = command({
             console.log(`   Clés traduites: ${stats.totalKeys}`);
             console.log(`   Langues: ${stats.languages.join(', ')}`);
             console.log(`   Durée: ${Math.round(stats.duration / 1000)}s`);
-            console.log(chalk.green(`\n✅ Fichiers sauvegardés dans: ${config.outputDir}`));
         } catch (error) {
             spinner.fail(chalk.red('Erreur lors de la traduction'));
             console.error(chalk.red(error instanceof Error ? error.message : 'Erreur inconnue'));
@@ -91,7 +84,6 @@ const checkCommand = command({
             console.log(`   Modèle: ${config.model}`);
             console.log(`   Langue source: ${config.sourceLang}`);
             console.log(`   Langues cibles: ${config.targetLangs.join(', ')}`);
-            console.log(`   Répertoire de sortie: ${config.outputDir}`);
         } catch (error) {
             spinner.fail(chalk.red('Erreur de configuration'));
             console.error(chalk.red(error instanceof Error ? error.message : 'Erreur inconnue'));
