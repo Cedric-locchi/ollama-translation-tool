@@ -76,10 +76,10 @@ Translate files matching a glob pattern to target languages.
 ttool translate [options]
 
 Options:
-  -p, --pattern <pattern>    Pattern des fichiers à traduire (ex: "./translations/*.json") [required]
-  -l, --langs <langs>        Langues cibles séparées par des virgules (default: "en,es,de,it,pt,nl")
-  -s, --source <source>      Langue source (default: "fr")
-  -f, --file <file>          Nom du fichier de sortie
+  -p, --pattern <pattern>    File pattern to translate (ex: "./translations/*.json") [required]
+  -l, --langs <langs>        Target languages separated by commas (default: "en,es,de,it,pt,nl")
+  -s, --source <source>      Source language (default: "fr")
+  -f, --file <file>          Output filename
 ```
 
 **Examples:**
@@ -104,6 +104,7 @@ ttool check
 ```
 
 This command will:
+
 - Validate your configuration
 - Test Ollama connection
 - Verify the model is available
@@ -118,7 +119,7 @@ ttool test [options]
 
 Options:
   -t, --text <text>     Texte à traduire [required]
-  -f, --from <from>     Langue source (default: "fr") 
+  -f, --from <from>     Langue source (default: "fr")
   --to <to>             Langue cible (default: "en")
 ```
 
@@ -152,7 +153,7 @@ DEFAULT_TARGET_LANGS=en,es,de,it,pt,nl
 MAX_CONCURRENT_REQUESTS=3
 TRANSLATION_TIMEOUT=30000
 
-# File Settings  
+# File Settings
 TRANSLATIONS_DIR=./translations
 OUTPUT_DIR=./output
 OUTPUT_FILE_NAME=translations
@@ -190,10 +191,10 @@ If no `.env` file is provided, these defaults are used:
 
 // Output: en.json (automatically generated)
 {
-  "welcome": "Welcome to our application", 
+  "welcome": "Welcome to our application",
   "navigation": {
     "home": "Home",
-    "about": "About", 
+    "about": "About",
     "contact": "Contact"
   },
   "buttons": {
@@ -272,7 +273,7 @@ pnpm install:cli      # Install CLI globally via install.sh
 # Run all tests
 pnpm test
 
-# Run tests in watch mode  
+# Run tests in watch mode
 pnpm test:watch
 
 # Run specific test
@@ -293,9 +294,9 @@ console.log(result); // "Hello"
 // Advanced usage
 const translator = new OllamaTranslator();
 const translation = await translator.translate({
-  text: 'Comment allez-vous ?',
-  sourceLang: 'fr', 
-  targetLang: 'en'
+    text: 'Comment allez-vous ?',
+    sourceLang: 'fr',
+    targetLang: 'en',
 });
 
 // Process files
@@ -318,6 +319,7 @@ Works with any Ollama-compatible translation model:
 ### Common Issues
 
 **❌ "Ollama n'est pas disponible"**
+
 ```bash
 # Check if Ollama is running
 ollama list
@@ -327,6 +329,7 @@ ollama serve
 ```
 
 **❌ "Le modèle n'est pas installé"**
+
 ```bash
 # Pull the required model
 ollama pull llama3.1:8b
@@ -336,6 +339,7 @@ ollama list
 ```
 
 **❌ "Aucun fichier trouvé"**
+
 ```bash
 # Check your pattern syntax
 ttool translate -p "./translations/**/*.json" -l "en"
@@ -345,6 +349,7 @@ ttool translate -p "/full/path/to/translations/*.json" -l "en"
 ```
 
 **❌ Memory Issues**
+
 - Reduce `MAX_CONCURRENT_REQUESTS` in your `.env`
 - Use a smaller model like `llama2:7b`
 - Process fewer files at once
