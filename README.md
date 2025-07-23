@@ -2,174 +2,229 @@
 
 [![Node.js CI](https://github.com/Cedric-locchi/ollama-translation-tool/actions/workflows/github-workflow.yml/badge.svg)](https://github.com/Cedric-locchi/ollama-translation-tool/actions/workflows/github-workflow.yml)
 
-A set of TypeScript/Node.js tools for automated file translation using Ollama local models.
+A powerful TypeScript/Node.js CLI tool for automated file translation using Ollama local models.
 
 ## Features
 
-- 🔄 **Batch Translation**: Translate JSON/YAML files efficiently
+- 🔄 **Batch Translation**: Translate JSON/YAML files efficiently with glob patterns
 - 🏠 **Local Models**: Use Ollama for privacy-focused translation
 - 📁 **File Processing**: Support for JSON and YAML formats
-- 🎯 **Glob Patterns**: Translate multiple files with pattern matching
+- 🎯 **Pattern Matching**: Process multiple files with glob patterns
 - 🛡️ **Type Safe**: Full TypeScript support with strict types
 - ⚡ **Performance**: Optimized for large volume translations
-- 🎨 **CLI Interface**: Beautiful command-line interface with colored output
+- 🎨 **CLI Interface**: Beautiful command-line interface with colored output and spinners
 
 ## Installation
 
-````bash
-# Install dependencies
+```bash
+# Clone and install
+git clone https://github.com/Cedric-locchi/ollama-translation-tool.git
+cd ollama-translation-tool
 pnpm install
 
 # Build the project
-pnpm run build
+pnpm build
 
+# Install CLI globally
+pnpm install:cli
+```
+
+Or install globally via npm:
+
+```bash
+npm install -g @cedric/translation-tools
+```
 
 ## Prerequisites
 
-- Node.js 18+
-- [Ollama](https://ollama.ai/) running locally
-- A compatible translation model (recommended: llama3.1:8b)
+- **Node.js 18+**
+- **[Ollama](https://ollama.ai/)** running locally
+- **Translation model** (recommended: `llama3.1:8b`)
 
 ## Quick Start
 
-1. **Start Ollama** (if not already running):
+### 1. Setup Ollama
+
 ```bash
+# Start Ollama (if not already running)
 ollama serve
-````
 
-2. **Pull a translation model**:
-
-```bash
+# Pull the recommended model
 ollama pull llama3.1:8b
 ```
 
-3. **Configure environment** (optional):
+### 2. Basic Usage
 
 ```bash
-export OLLAMA_HOST=localhost:11434
-export OLLAMA_MODEL=llama3.1:8b
-```
+# Translate files using glob pattern
+ttool translate -p "./translations/*.json" -l "en,es,de"
 
-4. **Translate files**:
+# Test a quick translation
+ttool test -t "Bonjour le monde" --to en
 
-```bash
-# Translate a single file
-ttool translate src/locales/en.json --to fr --output src/locales/fr.json
-
-# Translate multiple files with glob pattern
-ttool translate "src/locales/*.json" --to es --output-dir src/locales/
-
-# Quick text translation test
-ttool test "Hello world" --to fr
+# Check configuration and connection
+ttool check
 ```
 
 ## CLI Commands
 
-### `translate`
+### `translate` - Translate Files
 
-Translate files with glob patterns support.
+Translate files matching a glob pattern to target languages.
 
 ```bash
-ttool translate <input> --to <language> [options]
+ttool translate [options]
 
 Options:
-  -t, --to <lang>        Target language (required)
-  -o, --output <file>    Output file path
-  -d, --output-dir <dir> Output directory for multiple files
-  -m, --model <model>    Ollama model to use
-  -b, --batch-size <n>   Batch size for translation (default: 10)
-  --dry-run              Show what would be translated without doing it
+  -p, --pattern <pattern>    Pattern des fichiers à traduire (ex: "./translations/*.json") [required]
+  -l, --langs <langs>        Langues cibles séparées par des virgules (default: "en,es,de,it,pt,nl")
+  -s, --source <source>      Langue source (default: "fr")
+  -f, --file <file>          Nom du fichier de sortie
 ```
 
-### `check`
-
-Verify configuration and Ollama connection.
+**Examples:**
 
 ```bash
-ttool check [options]
+# Translate all JSON files in translations/ to English and Spanish
+ttool translate -p "./translations/*.json" -l "en,es"
 
-Options:
-  -m, --model <model>    Test specific model
-  -v, --verbose          Show detailed information
+# Translate with custom source language
+ttool translate -p "./locales/*.yaml" -s "en" -l "fr,de,it"
+
+# Translate with custom output filename
+ttool translate -p "./i18n/fr.json" -l "en" -f "messages"
 ```
 
-### `test`
+### `check` - Verify Configuration
 
-Quick test of text translation.
+Check your configuration and Ollama connection.
 
 ```bash
-ttool test <text> --to <language> [options]
+ttool check
+```
+
+This command will:
+- Validate your configuration
+- Test Ollama connection
+- Verify the model is available
+- Display current settings
+
+### `test` - Quick Translation Test
+
+Test translation with a simple text string.
+
+```bash
+ttool test [options]
 
 Options:
-  -t, --to <lang>        Target language (required)
-  -m, --model <model>    Ollama model to use
+  -t, --text <text>     Texte à traduire [required]
+  -f, --from <from>     Langue source (default: "fr") 
+  --to <to>             Langue cible (default: "en")
+```
+
+**Examples:**
+
+```bash
+# Quick French to English translation
+ttool test -t "Bonjour le monde" --to en
+
+# Translate from English to French
+ttool test -t "Hello world" -f en --to fr
+
+# Multiple word translation
+ttool test -t "Comment allez-vous ?" --to en
 ```
 
 ## Configuration
 
 ### Environment Variables
 
-```bash
-# Ollama configuration
-OLLAMA_HOST=localhost:11434          # Ollama server host
-OLLAMA_MODEL=llama3.1:8b            # Default model for translation
-
-# Translation settings
-TRANSLATION_BATCH_SIZE=10            # Number of texts to translate in one batch
-TRANSLATION_CONCURRENCY=3            # Max concurrent requests to Ollama
-TRANSLATION_TEMPERATURE=0.1          # Model temperature for consistency
-```
-
-### Configuration File
-
 Create a `.env` file in your project root:
 
 ```env
-OLLAMA_HOST=localhost:11434
+# Ollama Configuration
+OLLAMA_HOST=http://localhost:11434
 OLLAMA_MODEL=llama3.1:8b
-TRANSLATION_BATCH_SIZE=10
-TRANSLATION_CONCURRENCY=3
-TRANSLATION_TEMPERATURE=0.1
+
+# Translation Settings
+DEFAULT_SOURCE_LANG=fr
+DEFAULT_TARGET_LANGS=en,es,de,it,pt,nl
+MAX_CONCURRENT_REQUESTS=3
+TRANSLATION_TIMEOUT=30000
+
+# File Settings  
+TRANSLATIONS_DIR=./translations
+OUTPUT_DIR=./output
+OUTPUT_FILE_NAME=translations
 ```
+
+### Default Configuration
+
+If no `.env` file is provided, these defaults are used:
+
+- **Ollama Host**: `http://localhost:11434`
+- **Model**: `llama3.1:8b`
+- **Source Language**: `fr`
+- **Target Languages**: `en,es,de,it,pt,nl`
+- **Max Concurrent Requests**: `3`
+- **Timeout**: `30000ms`
 
 ## File Formats
 
-### JSON Translation
+### JSON Files
 
 ```json
-// Input: en.json
-{
-  "welcome": "Welcome to our app",
-  "buttons": {
-    "save": "Save",
-    "cancel": "Cancel"
-  }
-}
-
-// Output: fr.json (after translation)
+// Input: fr.json
 {
   "welcome": "Bienvenue dans notre application",
+  "navigation": {
+    "home": "Accueil",
+    "about": "À propos",
+    "contact": "Contact"
+  },
   "buttons": {
     "save": "Enregistrer",
     "cancel": "Annuler"
   }
 }
+
+// Output: en.json (automatically generated)
+{
+  "welcome": "Welcome to our application", 
+  "navigation": {
+    "home": "Home",
+    "about": "About", 
+    "contact": "Contact"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
 ```
 
-### YAML Translation
+### YAML Files
 
 ```yaml
-# Input: en.yaml
-welcome: Welcome to our app
-buttons:
-  save: Save
-  cancel: Cancel
-
-# Output: fr.yaml (after translation)
+# Input: fr.yaml
 welcome: Bienvenue dans notre application
+navigation:
+  home: Accueil
+  about: À propos
+  contact: Contact
 buttons:
   save: Enregistrer
   cancel: Annuler
+
+# Output: en.yaml (automatically generated)
+welcome: Welcome to our application
+navigation:
+  home: Home
+  about: About
+  contact: Contact
+buttons:
+  save: Save
+  cancel: Cancel
 ```
 
 ## Development
@@ -178,15 +233,15 @@ buttons:
 
 ```
 src/
-├── types.ts           # TypeScript interfaces and types
-├── config.ts          # Configuration and environment variables
-├── translator.ts      # Translation service with Ollama API
-├── file-processor.ts  # JSON/YAML file processing
-├── cli.ts            # CLI interface with Brocli
-└── index.ts          # Entry point and public API
+├── cli.ts              # CLI interface with Brocli
+├── config.ts           # Configuration and environment variables
+├── translator.ts       # Ollama translation service
+├── file-processor.ts   # JSON/YAML file processing
+├── types.ts            # TypeScript interfaces and types
+└── index.ts            # Entry point and public API
 ```
 
-### Scripts
+### Available Scripts
 
 ```bash
 # Development
@@ -217,57 +272,52 @@ pnpm install:cli      # Install CLI globally via install.sh
 # Run all tests
 pnpm test
 
-# Run tests in watch mode
+# Run tests in watch mode  
 pnpm test:watch
 
-# Run specific test file
-pnpm test translator.test.ts
+# Run specific test
+pnpm test file-processor.test.ts
 ```
 
-## API Usage
+## Programmatic Usage
 
-You can also use the tools programmatically:
+You can also use the translation tools in your Node.js applications:
 
 ```typescript
-import { Translator, FileProcessor } from '@cedric/translation-tools';
+import { OllamaTranslator, FileProcessor, quickTranslate } from '@cedric/translation-tools';
 
-// Initialize translator
-const translator = new Translator({
-    host: 'localhost:11434',
-    model: 'llama3.1:8b',
-    temperature: 0.1,
+// Quick translation
+const result = await quickTranslate('Bonjour', 'fr', 'en');
+console.log(result); // "Hello"
+
+// Advanced usage
+const translator = new OllamaTranslator();
+const translation = await translator.translate({
+  text: 'Comment allez-vous ?',
+  sourceLang: 'fr', 
+  targetLang: 'en'
 });
 
-// Translate text
-const result = await translator.translate('Hello world', 'fr');
-console.log(result); // "Bonjour le monde"
-
 // Process files
-const processor = new FileProcessor(translator);
-await processor.translateFile('src/locales/en.json', 'fr', 'src/locales/fr.json');
+const processor = new FileProcessor();
+await processor.processFiles('./translations/*.json', ['en', 'es']);
 ```
 
 ## Supported Models
 
-- **llama3.1:8b** (recommended) - Best balance of quality and speed
+Works with any Ollama-compatible translation model:
+
+- **llama3.1:8b** ⭐ (recommended) - Best balance of quality and speed
 - **llama3.1:70b** - Higher quality, slower
-- **llama2** - Good performance
-- **mistral** - Alternative option
-- Any Ollama-compatible translation model
-
-## Performance Tips
-
-1. **Batch Size**: Adjust `TRANSLATION_BATCH_SIZE` based on your model and hardware
-2. **Concurrency**: Increase `TRANSLATION_CONCURRENCY` for faster processing (monitor resource usage)
-3. **Model Choice**: Use llama3.1:8b for best speed/quality balance
-4. **Temperature**: Keep low (0.1) for consistent translations
+- **llama2:7b** - Good performance
+- **mistral:7b** - Alternative option
+- **codellama:7b** - Code-aware translations
 
 ## Troubleshooting
 
 ### Common Issues
 
-**Connection Error**:
-
+**❌ "Ollama n'est pas disponible"**
 ```bash
 # Check if Ollama is running
 ollama list
@@ -276,18 +326,35 @@ ollama list
 ollama serve
 ```
 
-**Model Not Found**:
-
+**❌ "Le modèle n'est pas installé"**
 ```bash
-# Pull the model
+# Pull the required model
 ollama pull llama3.1:8b
+
+# Check available models
+ollama list
 ```
 
-**Memory Issues**:
+**❌ "Aucun fichier trouvé"**
+```bash
+# Check your pattern syntax
+ttool translate -p "./translations/**/*.json" -l "en"
 
-- Reduce batch size
-- Lower concurrency
-- Use a smaller model
+# Use absolute path if needed
+ttool translate -p "/full/path/to/translations/*.json" -l "en"
+```
+
+**❌ Memory Issues**
+- Reduce `MAX_CONCURRENT_REQUESTS` in your `.env`
+- Use a smaller model like `llama2:7b`
+- Process fewer files at once
+
+### Performance Tips
+
+1. **Concurrent Requests**: Adjust `MAX_CONCURRENT_REQUESTS` (1-5 recommended)
+2. **Model Choice**: Use `llama3.1:8b` for best speed/quality balance
+3. **Batch Size**: Process large files in smaller batches
+4. **Hardware**: More RAM = higher concurrency possible
 
 ## Contributing
 
@@ -305,3 +372,4 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 - [Ollama](https://ollama.ai/) - Local LLM runtime
 - [Brocli](https://github.com/drizzle-team/brocli) - CLI framework from drizzle-team
+- [i18next](https://www.i18next.com/) - Internationalization framework
